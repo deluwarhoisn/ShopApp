@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import SessionProvider from "@/components/SessionProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from 'react-hot-toast';
@@ -26,14 +25,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <SessionProvider>
-          <Navbar />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-          <Toaster position="top-right" />
-        </SessionProvider>
+        <Navbar />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
+        <Toaster position="top-right" />
       </body>
     </html>
   );
