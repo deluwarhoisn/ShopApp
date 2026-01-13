@@ -22,7 +22,7 @@ export default function Home() {
                 Shop Now
               </Link>
               <Link
-                href="/login"
+                href="/login-simple"
                 className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-block"
               >
                 Get Started
@@ -271,7 +271,7 @@ export default function Home() {
               Browse Products
             </Link>
             <Link
-              href="/login"
+              href="/login-simple"
               className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-block"
             >
               Create Account

@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { simpleAuth } from '@/lib/simple-auth';
 
 export default function AddItemPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -17,8 +18,20 @@ export default function AddItemPage() {
     category: 'Electronics'
   });
 
-  // Redirect if not authenticated
-  if (status === 'loading') {
+  useEffect(() => {
+    // Check authentication status
+    const authStatus = simpleAuth.isAuthenticated();
+    setIsAuthenticated(authStatus);
+    setCheckingAuth(false);
+    
+    if (!authStatus) {
+      toast.error('Please login to access this page');
+      router.push('/login-simple');
+    }
+  }, [router]);
+
+  // Show loading while checking authentication
+  if (checkingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -26,8 +39,8 @@ export default function AddItemPage() {
     );
   }
 
-  if (status === 'unauthenticated') {
-    router.push('/login');
+  // Redirect if not authenticated
+  if (!isAuthenticated) {
     return null;
   }
 

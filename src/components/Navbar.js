@@ -1,17 +1,40 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { simpleAuth } from '@/lib/simple-auth';
 
 export default function Navbar() {
-  const { data: session } = useSession();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
+  useEffect(() => {
+    // Check authentication status on component mount
+    const checkAuth = () => {
+      const authStatus = simpleAuth.isAuthenticated();
+      const userData = simpleAuth.getUser();
+      setIsAuthenticated(authStatus);
+      setUser(userData);
+    };
+
+    checkAuth();
+    
+    // Listen for storage changes (login/logout in other tabs)
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const handleLogout = () => {
+    simpleAuth.logout();
+    setIsAuthenticated(false);
+    setUser(null);
     router.push('/');
   };
 
@@ -33,12 +56,12 @@ export default function Navbar() {
             <Link href="/items" className="text-gray-700 hover:text-blue-600 transition-colors">
               Items
             </Link>
-            {session ? (
+            {isAuthenticated ? (
               <>
                 <Link href="/add-item" className="text-gray-700 hover:text-blue-600 transition-colors">
                   Add Item
                 </Link>
-                <span className="text-gray-600">Welcome, {session.user?.email}</span>
+                <span className="text-gray-600">Welcome, {user?.email}</span>
                 <button
                   onClick={handleLogout}
                   className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
@@ -79,12 +102,12 @@ export default function Navbar() {
               <Link href="/items" className="block px-3 py-2 text-gray-700 hover:text-blue-600">
                 Items
               </Link>
-              {session ? (
+              {isAuthenticated ? (
                 <>
                   <Link href="/add-item" className="block px-3 py-2 text-gray-700 hover:text-blue-600">
                     Add Item
                   </Link>
-                  <span className="block px-3 py-2 text-gray-600">Welcome, {session.user?.email}</span>
+                  <span className="block px-3 py-2 text-gray-600">Welcome, {user?.email}</span>
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-3 py-2 text-red-600 hover:text-red-800"
@@ -93,7 +116,7 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                <Link href="/login" className="block px-3 py-2 text-blue-600 hover:text-blue-800">
+                <Link href="/login-simple" className="block px-3 py-2 text-blue-600 hover:text-blue-800">
                   Login
                 </Link>
               )}
