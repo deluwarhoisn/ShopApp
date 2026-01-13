@@ -4,20 +4,21 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { simpleAuth } from '@/lib/simple-auth';
+import { useAuth } from '@/lib/auth-context';
 
 export default function SimpleLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const result = simpleAuth.login(email, password);
+      const result = login(email, password);
       
       if (result.success) {
         toast.success('Login successful!');

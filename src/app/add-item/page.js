@@ -3,13 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { simpleAuth } from '@/lib/simple-auth';
+import { useAuth } from '@/lib/auth-context';
 
 export default function AddItemPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+  const { isAuthenticated, loading } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -20,18 +19,14 @@ export default function AddItemPage() {
 
   useEffect(() => {
     // Check authentication status
-    const authStatus = simpleAuth.isAuthenticated();
-    setIsAuthenticated(authStatus);
-    setCheckingAuth(false);
-    
-    if (!authStatus) {
+    if (!loading && !isAuthenticated) {
       toast.error('Please login to access this page');
       router.push('/login-simple');
     }
-  }, [router]);
+  }, [isAuthenticated, loading, router]);
 
   // Show loading while checking authentication
-  if (checkingAuth) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>

@@ -2,39 +2,16 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { simpleAuth } from '@/lib/simple-auth';
+import { useState } from 'react';
+import { useAuth } from '@/lib/auth-context';
 
 export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Check authentication status on component mount
-    const checkAuth = () => {
-      const authStatus = simpleAuth.isAuthenticated();
-      const userData = simpleAuth.getUser();
-      setIsAuthenticated(authStatus);
-      setUser(userData);
-    };
-
-    checkAuth();
-    
-    // Listen for storage changes (login/logout in other tabs)
-    const handleStorageChange = () => {
-      checkAuth();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  const { user, isAuthenticated, logout } = useAuth();
 
   const handleLogout = () => {
-    simpleAuth.logout();
-    setIsAuthenticated(false);
-    setUser(null);
+    logout();
     router.push('/');
   };
 
