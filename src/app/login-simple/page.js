@@ -50,13 +50,13 @@ export default function SimpleLoginPage() {
 
         <div className="bg-white p-8 rounded-lg shadow-md">
           {/* Demo Credentials Info */}
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          {/* <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <h3 className="text-sm font-medium text-blue-800 mb-2">Demo Credentials:</h3>
             <p className="text-sm text-blue-700">
               <strong>Email:</strong> admin@shopapp.com<br />
               <strong>Password:</strong> password123
             </p>
-          </div>
+          </div> */}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
